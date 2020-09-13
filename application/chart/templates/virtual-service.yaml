@@ -1,0 +1,17 @@
+{{- if .Values.appMesh.enabled -}}
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: VirtualService
+metadata:
+  name: {{ template "application.fullname" . }}
+  labels:
+    app: {{ template "application.name" . }}
+    chart: {{ template "application.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  awsName: {{ template "application.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+  provider:
+    virtualNode:
+      virtualNodeRef:
+        name: {{ template "application.fullname" . }}
+{{- end }}

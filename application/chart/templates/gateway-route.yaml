@@ -1,0 +1,20 @@
+{{- if (.Values.appMesh.enabled) and (.Values.appMesh.outsideTrafficAllowed)  -}}
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: GatewayRoute
+metadata:
+  name: {{ template "application.fullname" . }}
+  labels:
+    app: {{ template "application.name" . }}
+    chart: {{ template "application.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  httpRoute:
+    match:
+      prefix: /
+    action:
+      target:
+        virtualService:
+          virtualServiceRef:
+            name: {{ template "application.fullname" . }}
+{{- end }}

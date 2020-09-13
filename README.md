@@ -1,4 +1,4 @@
-# Helm Charts for applications deployed to EKS Clusters with AWS App Mesh
+# Helm Charts for deploying containerized applications to EKS Clusters with AWS App Mesh
 
 This repository contains generic, parameterized Helm Charts suitable for deploying typical back-end web applications to Amazon Elastic Kubernetes Service (EKS) clusters that may have AWS App Mesh.
 
