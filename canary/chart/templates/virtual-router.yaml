@@ -1,0 +1,26 @@
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: VirtualRouter
+metadata:
+  name: {{ template "canary.fullname" . }}
+  labels:
+    app: {{ template "canary.name" . }}
+    chart: {{ template "canary.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  listeners:
+    - portMapping:
+        port: {{ .Values.vRouterListener.port }}
+        protocol: {{ .Values.vRouterListener.protocol }}
+  routes:
+    - name: {{ template "canary.fullname" . }}
+      httpRoute:
+        match:
+          prefix: /
+        action:
+          weightedTargets:
+          {{- range required "At least one target Virtual Node has to be specified" .Values.targets }}
+            - virtualNodeRef:
+                name: {{ .vNodeName }}
+              weight: {{ .weight }}
+          {{- end }}

@@ -1,0 +1,15 @@
+fullnameOverride: canary  # Set your canary Virtual Service name here
+
+mesh:
+  # change to true if this Canary needs to be accessible from outside the mesh
+  allowExternalTraffic: false 
+
+targets:  # Uncomment snippet below to set route(s) to your existing back-end app Virtual Node
+#  - vNodeName: existing-vnode-for-service-v1
+#    weight: 9
+#  - vNodeName: existing-vnode-for-service-v2
+#    weight: 1
+  
+vRouterListener:
+  port: 80
+  protocol: http

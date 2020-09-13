@@ -1,0 +1,6 @@
+Deploeds App Mesh "Canary" plumbing consisting of 
+1) a virtual router dispatching traffic to pre-existing virtual nodes
+2) a virtual service sending traffic to the virtual router
+{{- if .Values.mesh.allowExternalTraffic }}
+3) and a gateway route sending external traffic to the virtual service
+{{- end }}

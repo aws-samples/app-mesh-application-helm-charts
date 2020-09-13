@@ -1,0 +1,20 @@
+{{- if .Values.mesh.allowExternalTraffic }}
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: GatewayRoute
+metadata:
+  name: {{ template "canary.fullname" . }}
+  labels:
+    app: {{ template "canary.name" . }}
+    chart: {{ template "canary.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  httpRoute:
+    match:
+      prefix: /{{ template "canary.fullname" . }}
+    action:
+      target:
+        virtualService:
+          virtualServiceRef:
+            name: {{ template "canary.fullname" . }}
+{{- end }}
