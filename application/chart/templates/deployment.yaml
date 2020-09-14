@@ -24,7 +24,7 @@ spec:
       annotations:
         buildID: {{ .Values.buildID | default "" | quote }}
     spec:
-      serviceAccountName: {{ .Values.mesh.podServiceAccount }}
+      serviceAccountName: {{ .Values.appMesh.podServiceAccount }}
       securityContext:
         fsGroup: 1337
       containers:
