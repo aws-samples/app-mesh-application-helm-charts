@@ -1,8 +1,8 @@
 # Default values for application.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-fullnameOverride: change-this-application-name-v1 # replace with your application name that is URL-friendly
 replicaCount: 1
+# fullnameOverride: your-main-resource-name 
 image:
   # repository: 
   tag: latest
