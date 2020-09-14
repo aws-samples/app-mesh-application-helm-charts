@@ -24,6 +24,9 @@ spec:
       annotations:
         buildID: {{ .Values.buildID | default "" | quote }}
     spec:
+      serviceAccountName: {{ .Values.mesh.podServiceAccount }}
+      securityContext:
+        fsGroup: 1337
       containers:
         - name: {{ .Chart.Name }}
           image: {{ required "Please specify container image repository" .Values.image.repository }}:{{ .Values.image.tag }}

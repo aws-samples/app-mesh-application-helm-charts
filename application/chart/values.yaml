@@ -27,6 +27,7 @@ probes:
 appMesh:
   enabled: false
   outsideTrafficAllowed: false
+  podServiceAccount: meshed-pod-account # Per-namespace ServiceAccount 
 
 ingress:
   enabled: false
