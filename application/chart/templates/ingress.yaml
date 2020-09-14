@@ -3,6 +3,7 @@
 {{- $fullName := include "application.fullname" . -}}
 {{- $servicePort := .Values.service.port -}}
 {{- $ingressPath := .Values.ingress.path -}}
+{{- $defaultIngressPath := printf "/%s/*" $fullName -}}
 {{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1beta1
 {{- else -}}
@@ -37,18 +38,18 @@ spec:
     - host: {{ . }}
       http:
         paths:
-          - path: {{ $ingressPath }}
+          - path: {{ $ingressPath | default $defaultIngressPath }}
             backend:
               serviceName: {{ $fullName }}
-              servicePort: http
+              servicePort: {{ .Values.service.port | default 80 }}
   {{- end }}
   {{- else }}
     - http:
         paths:
-          - path: {{ $ingressPath }}
+          - path: {{ $ingressPath | default $defaultIngressPath }}
             backend:
               serviceName: {{ $fullName }}
-              servicePort: http
+              servicePort: {{ .Values.service.port | default 80 }}
   {{- end }}
 {{- end }}
 {{- end }}
