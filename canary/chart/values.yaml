@@ -1,4 +1,4 @@
-fullnameOverride: canary  # Set your canary Virtual Service name here
+#fullnameOverride: canary 
 
 mesh:
   # change to true if this Canary needs to be accessible from outside the mesh
