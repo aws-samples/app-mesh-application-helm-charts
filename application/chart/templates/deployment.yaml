@@ -24,9 +24,11 @@ spec:
       annotations:
         buildID: {{ .Values.buildID | default "" | quote }}
     spec:
-      serviceAccountName: {{ .Values.appMesh.podServiceAccount }}
+      {{- if .Values.appMesh.fargatePodServiceAccount }}
+      serviceAccountName: {{ .Values.appMesh.fargatePodServiceAccount }}
       securityContext:
         fsGroup: 1337
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: {{ required "Please specify container image repository" .Values.image.repository }}:{{ .Values.image.tag }}
@@ -46,6 +48,12 @@ spec:
               port: http
           {{- end }}
           env:
+            {{- if .Values.env }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
+            {{- end }}
             {{- $root := . }}
             {{- range $ref, $values := .Values.secrets }}
             {{- range $key, $value := $values }}

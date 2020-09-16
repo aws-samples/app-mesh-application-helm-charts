@@ -1,9 +1,11 @@
 #fullnameOverride: canary 
 
 service:
+  type: ClusterIP
   port: 80
   portName: # http
-  selectorLabels:
+  targetPort:
+  selectorLabels: # required
     # app: # chart-name-of-the-application
 
 appMesh:

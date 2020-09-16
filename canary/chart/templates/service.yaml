@@ -8,8 +8,12 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
+  type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
+      {{- if .Values.service.targetPort }}
+      targetPort: {{ .Values.service.targetPort }}
+      {{- end }}
       {{- if .Values.service.portName }}
       name: {{ .Values.service.portName }}
       {{- end }}

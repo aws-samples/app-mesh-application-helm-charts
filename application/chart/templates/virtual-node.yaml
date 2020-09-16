@@ -15,8 +15,16 @@ spec:
       release: {{ .Release.Name }}
   listeners:
     - portMapping:
-        port: {{ .Values.service.port }}
+        port: {{ .Values.deployment.containerPort }}
         protocol: http
+  {{- if .Values.appMesh.backendVirtualServices }}
+  backends:
+    {{- range .Values.appMesh.backendVirtualServices }}
+    - virtualService:
+        virtualServiceRef:
+          name: {{ . }}
+    {{- end }}
+  {{- end }}
   serviceDiscovery:
     dns:
       hostname: {{ template "application.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local

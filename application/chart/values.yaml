@@ -4,7 +4,7 @@
 replicaCount: 1
 # fullnameOverride: your-main-resource-name 
 image:
-  # repository: 
+  repository: # required: specify repository
   tag: latest
   pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -27,7 +27,13 @@ probes:
 appMesh:
   enabled: false
   outsideTrafficAllowed: false
-  podServiceAccount: meshed-pod-account # Per-namespace ServiceAccount 
+  fargatePodServiceAccount: # meshed-pod-account 
+  backendVirtualServices: # services (preferably canaries) that your app calls
+   # - svc1
+   # - svc2
+
+env:
+  # AppSettings__Color: red
 
 ingress:
   enabled: false
@@ -43,6 +49,7 @@ ingress:
     # - secretName: chart-example-tls
     #   hosts:
     #     - chart-example.local
+
 secrets: {}
   # Optionally specify a set of secret objects whose values
   # will be injected as environment variables by default.
