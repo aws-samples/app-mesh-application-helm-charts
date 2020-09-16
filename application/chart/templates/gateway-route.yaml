@@ -11,7 +11,7 @@ metadata:
 spec:
   httpRoute:
     match:
-      prefix: /
+      prefix: /{{ template "application.fullname" . }}
     action:
       target:
         virtualService:

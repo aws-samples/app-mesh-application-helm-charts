@@ -1,4 +1,4 @@
-{{- if .Values.mesh.allowExternalTraffic }}
+{{- if (.Values.appMesh.enabled) and (.Values.appMesh.outsideTrafficAllowed) -}}
 apiVersion: appmesh.k8s.aws/v1beta2
 kind: GatewayRoute
 metadata:
@@ -17,4 +17,4 @@ spec:
         virtualService:
           virtualServiceRef:
             name: {{ template "canary.fullname" . }}
-{{- end }}
+{{- end -}}

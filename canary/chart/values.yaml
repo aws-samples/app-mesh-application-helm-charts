@@ -1,15 +1,18 @@
 #fullnameOverride: canary 
 
-mesh:
-  # change to true if this Canary needs to be accessible from outside the mesh
-  allowExternalTraffic: false 
-
-targets:  # Uncomment snippet below to set route(s) to your existing back-end app Virtual Node
-#  - vNodeName: existing-vnode-for-service-v1
-#    weight: 9
-#  - vNodeName: existing-vnode-for-service-v2
-#    weight: 1
-  
-vRouterListener:
+service:
   port: 80
-  protocol: http
+  portName: # http
+  selectorLabels:
+    # app: # chart-name-of-the-application
+
+appMesh:
+  enabled: false
+  outsideTrafficAllowed: false # change to true if this Canary needs to be accessible from outside the mesh
+  vRouterListenerProtocol: http
+
+  targets:  # Uncomment snippet below to set route(s) to your existing back-end app Virtual Node
+  #  - vNodeName: existing-vnode-for-service-v1
+  #    weight: 9
+  #  - vNodeName: existing-vnode-for-service-v2
+  #    weight: 1

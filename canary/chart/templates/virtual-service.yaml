@@ -1,3 +1,4 @@
+{{- if .Values.appMesh.enabled -}}
 apiVersion: appmesh.k8s.aws/v1beta2
 kind: VirtualService
 metadata:
@@ -13,3 +14,4 @@ spec:
     virtualRouter:
       virtualRouterRef:
         name: {{ template "canary.fullname" . }}
+{{- end -}}

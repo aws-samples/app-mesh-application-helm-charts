@@ -1,4 +1,3 @@
-{{- if not .Values.appMesh.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,4 +17,3 @@ spec:
   selector:
     app: {{ template "application.name" . }}
     release: {{ .Release.Name }}
-{{- end }}
