@@ -18,4 +18,4 @@ spec:
         virtualService:
           virtualServiceRef:
             name: {{ $fullName }}
-{{- end }}
+{{- end -}}
