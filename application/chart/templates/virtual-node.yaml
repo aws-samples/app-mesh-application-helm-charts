@@ -14,10 +14,10 @@ spec:
       app: {{ template "application.name" . }}
       release: {{ .Release.Name }}
   listeners:
-    - portMapping:
-        port: {{ .Values.deployment.containerPort }}
-        protocol: http
-  {{- if .Values.appMesh.backendVirtualServices }}
+  - portMapping:
+      port: {{ .Values.deployment.containerPort }}
+      protocol: http  {{- if .Values.appMesh.backendVirtualServices }}
+    {{ toYaml .Values.appMesh.healthCheck }}
   backends:
     {{- range .Values.appMesh.backendVirtualServices }}
     - virtualService:

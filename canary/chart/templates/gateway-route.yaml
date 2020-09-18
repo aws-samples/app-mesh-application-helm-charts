@@ -1,8 +1,9 @@
-{{- if (.Values.appMesh.enabled) and (.Values.appMesh.outsideTrafficAllowed) -}}
+{{- if and (.Values.appMesh.enabled) (.Values.appMesh.outsideTrafficAllowed) -}}
+{{- $fullName := include "application.fullname" . -}}
 apiVersion: appmesh.k8s.aws/v1beta2
 kind: GatewayRoute
 metadata:
-  name: {{ template "canary.fullname" . }}
+  name: {{ $fullName }}
   labels:
     app: {{ template "canary.name" . }}
     chart: {{ template "canary.chart" . }}
@@ -11,10 +12,10 @@ metadata:
 spec:
   httpRoute:
     match:
-      prefix: /{{ template "canary.fullname" . }}
+      prefix: {{ .Values.appMesh.gatewayRouteMatchPrefix | default (printf "/%s" $fullName) }}
     action:
       target:
         virtualService:
           virtualServiceRef:
-            name: {{ template "canary.fullname" . }}
+            name: {{ $fullName }}
 {{- end -}}

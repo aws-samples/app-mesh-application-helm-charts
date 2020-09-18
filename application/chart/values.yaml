@@ -6,7 +6,7 @@ replicaCount: 1
 image:
   repository: # required: specify repository
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always # Change to IfNotPresent if image tag ^^ is immutable
 imagePullSecrets: []
   # Optionally specify an array of imagePullSecrets.
   # Secrets must be manually created in the namespace.
@@ -27,21 +27,28 @@ probes:
 appMesh:
   enabled: false
   outsideTrafficAllowed: false
-  fargatePodServiceAccount: # meshed-pod-account 
+  fargatePodServiceAccount: # meshed-pod-account # Specify when running on EKS Fargate nodes
+  gatewayRouteMatchPrefix: # Supply override here, otherwise it's "/service-name"
+
   backendVirtualServices: # services (preferably canaries) that your app calls
    # - svc1
    # - svc2
 
+  healthCheck:
+    healthyThreshold: 2
+    intervalMillis: 5000
+    path: / # Must return 200, not Redirect (3xx) or 4xx or 5xx
+    protocol: http
+    timeoutMillis: 2000
+    unhealthyThreshold: 2
+
 env:
-  # AppSettings__Color: red
+  # ASPNETCORE_ENVIRONMENT: Development
+  # Settings__Color: red
 
 ingress:
   enabled: false
-  annotations:
-    # kubernetes.io/tls-acme: "true"
-    kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
+  cnameHost: # 192-168-1-10.nip.io # A hostname to which service name can prepended, like "service-name.192-168-1-10.nip.io"
   path: /*
   # hosts:
   #   - chart-example.local
@@ -49,6 +56,12 @@ ingress:
     # - secretName: chart-example-tls
     #   hosts:
     #     - chart-example.local
+
+  annotations:
+    # kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
 
 secrets: {}
   # Optionally specify a set of secret objects whose values

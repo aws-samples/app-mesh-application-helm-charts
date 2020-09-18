@@ -1,9 +1,9 @@
-{{- if .Values.appMesh.enabled  -}}
-{{- if .Values.appMesh.outsideTrafficAllowed -}}
+{{- if and (.Values.appMesh.enabled) (.Values.appMesh.outsideTrafficAllowed) -}}
+{{- $fullName := include "application.fullname" . -}}
 apiVersion: appmesh.k8s.aws/v1beta2
 kind: GatewayRoute
 metadata:
-  name: {{ template "application.fullname" . }}
+  name: {{ $fullName }}
   labels:
     app: {{ template "application.name" . }}
     chart: {{ template "application.chart" . }}
@@ -12,11 +12,10 @@ metadata:
 spec:
   httpRoute:
     match:
-      prefix: /{{ template "application.fullname" . }}
+      prefix: {{ .Values.appMesh.gatewayRouteMatchPrefix | default (printf "/%s" $fullName) }}
     action:
       target:
         virtualService:
           virtualServiceRef:
-            name: {{ template "application.fullname" . }}
-{{- end }}
+            name: {{ $fullName }}
 {{- end }}

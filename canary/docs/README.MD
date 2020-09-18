@@ -29,6 +29,17 @@ In real life you will want to set `selectorlabels` in the "values.yaml" file rat
 
 The output should contain single Kubernetes Service:
 
+### Add Ingress with CNAME host
+
+```PowerShell
+helm upgrade -i --dry-run `
+ --set service.selectorLabels.app=my-app `
+ --set ingress.enabled=true `
+ --set ingress.cnameHost=192-168-1-10.nip.io `
+ my-canary `
+ ./chart
+```
+
 ### With App Mesh
 
 ```PowerShell
