@@ -48,11 +48,13 @@ spec:
               port: http
           {{- end }}
           env:
-            {{- if .Values.env }}
+            {{- range $key, $value := .Values.backend.envAddresses }}
+            - name: {{ $key }}
+              value: {{ template "backendUrl" (dict "appMeshEnabled" $.Values.appMesh.enabled "backendAddress" $value "namespace" $.Release.Namespace) }}
+            {{- end }}
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value }}
-            {{- end }}
             {{- end }}
             {{- $root := . }}
             {{- range $ref, $values := .Values.secrets }}
