@@ -16,15 +16,16 @@ spec:
   listeners:
   - portMapping:
       port: {{ .Values.deployment.containerPort }}
-      protocol: http  {{- if .Values.appMesh.backendVirtualServices }}
+      protocol: http  
+    {{- if .Values.appMesh.backendVirtualServices }}
     {{ toYaml .Values.appMesh.healthCheck }}
+    {{- end }}
   backends:
-    {{- range .Values.appMesh.backendVirtualServices }}
+    {{- range $key, $value := .Values.backend.envAddresses }}
     - virtualService:
         virtualServiceRef:
-          name: {{ . }}
+          name: {{ $value }}
     {{- end }}
-  {{- end }}
   serviceDiscovery:
     dns:
       hostname: {{ template "application.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local

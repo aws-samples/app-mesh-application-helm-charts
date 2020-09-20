@@ -25,3 +25,17 @@ Create chart name and version as used by the chart label.
 {{- define "application.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Defines a "function" converting a backend service address into a URL
+*/}}
+{{- define "backendUrl" -}}
+{{- $appMeshEnabled := get . "appMeshEnabled" -}}
+{{- $backendAddress := get . "backendAddress" -}}
+{{- $namespace := get . "namespace" -}}
+{{- if $appMeshEnabled -}}
+{{- printf "http://%s.%s.svc.cloud.local/" $backendAddress $namespace -}}
+{{- else -}}
+{{- printf "http://%s/" $backendAddress -}}
+{{- end -}}
+{{- end -}}

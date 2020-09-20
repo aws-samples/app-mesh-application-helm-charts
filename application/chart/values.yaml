@@ -21,6 +21,10 @@ service:
 deployment:
   containerPort: 80
 
+backend:
+  envAddresses: # These entries will be turned into environment variables looking like "Settings_ServiceBaseUrl: http://color-canary/" or "Settings_ServiceBaseUrl: http://color-canary.namespace.svc.clud.local/"
+    # Settings_ServiceBaseUrl: color-canary
+
 probes:
   enabled: false
 
@@ -29,10 +33,6 @@ appMesh:
   outsideTrafficAllowed: false
   fargatePodServiceAccount: # meshed-pod-account # Specify when running on EKS Fargate nodes
   gatewayRouteMatchPrefix: # Supply override here, otherwise it's "/service-name"
-
-  backendVirtualServices: # services (preferably canaries) that your app calls
-   # - svc1
-   # - svc2
 
   healthCheck:
     healthyThreshold: 2
