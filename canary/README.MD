@@ -1,19 +1,25 @@
-# Canary Helm Chart for AWS App Mesh on EKS Cluster
+## Canary Helm Chart
 
-When two or more Kubernetes Deployments representing different version of the same application are deployed to an EKS cluster with [AWS App Mesh](https://docs.aws.amazon.com/app-mesh/latest/userguide/what-is-app-mesh.html), then mesh resources comprising Canary traffic pattern should be implemented as a separate Helm chart because Canary resource set has different - more permanent - lifecycle, compared to back-end services that are likely to be deployed frequently.
+This chart can be used for creating permanent, version-agnostic network endpoint for multiple and/or changing versions of and application. 
 
-This project contains work-in-progress Helm Chart for building Canary App Mesh resources:
-- Optional Gateway Route, which could be used to ingress traffic from outside the mesh, using pre-provisioned Ingress Gateway.
-- Virtual Service - a stable/immutable/version-agnostic Canary "alias" endpoint receiving traffic from other meshed applications or from an Ingress Gateway.
-- Virtual Router - taking traffic from the Virtual Service and sending it down to multiple pre-provisioned Virtual Nodes representing Pods in each app version's Deployment.
+This chart can be used for deploying to EKS namespaces that are part of an App Mesh, as well as for deploying to regular, non-meshed Kubernetes namespaces. The chart has an option of allowing outside-the-cluster traffic to flow to the canary endpoint.
 
-Following resources must be pre-provisioned in an EKS cluster prior to creating Canary resources:
-- App Mesh (App Mesh Controller)
-- At least one back-end application Deployment with a Virtual Node.
-- Optionally, Ingress Gateway if the back-end app needs to take from outside the mesh.
+### To shift traffic from one version to another
 
-Here's the diagram showing both resources that are expected to already exist, as well as resources deployed by this Chart:
+When canary endpoint deployed to a plain, non-meshed Kubernetes namespace, it is done using Kubernetes Service and therefore requires different replica counts for different application versions to implement, say, 80/20 traffic split between application versions, which is less than ideal, especially on Fargate where it may lead to node over-provisioning.
 
-![Resource Diagram](./docs/images/resource-diagram.png)
+When deployed to an App Mesh, VirtualRoutes allow for fine-grained traffic split regardless of the number of container replica of each application version.
 
-This Helm Chart [let users specify](./charts/canary/values.yaml) names of new resources, as well as names of destination Virtual Nodes.
+### Different destinations for Mesh vs no Mesh
+
+To specify destinations for canary traffic, for plain Kubernetes case, "`service.selectorLabels`" specifies a set of Pods that will receive the traffic routed in pseudo-random manner.
+
+When App Mesh is employed, "`appMesh.targets`" parameter specifies VirtualNodes and their "weight" for traffic distribution.
+
+Explore Helm Chart [values.yaml](../canary/chart/values.yaml) for details.
+
+### Different ways to let external traffic in, depending on the presence of the App Mesh
+
+For a regular, non-mesh installation, Ingress resource may be created using "`ingress.enabled`" parameter.
+
+For App Mesh case, "`appMesh.outsideTrafficAllowed`" parameter could be set to true to create GatewayRoute resource.
