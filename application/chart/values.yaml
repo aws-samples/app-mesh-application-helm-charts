@@ -31,7 +31,7 @@ probes:
 appMesh:
   enabled: false
   outsideTrafficAllowed: false
-  fargatePodServiceAccount: # meshed-pod-account # Specify when running on EKS Fargate nodes
+  fargatePodServiceAccount: # envoy-fargate-pod-svcaccount # Specify when running on EKS Fargate nodes
   gatewayRouteMatchPrefix: # Supply override here, otherwise it's "/service-name"
 
   healthCheck:
