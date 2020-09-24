@@ -34,7 +34,7 @@ Defines a "function" converting a backend service address into a URL
 {{- $backendAddress := get . "backendAddress" -}}
 {{- $namespace := get . "namespace" -}}
 {{- if $appMeshEnabled -}}
-{{- printf "http://%s.%s.svc.cloud.local/" $backendAddress $namespace -}}
+{{- printf "http://%s.%s.svc.cluster.local/" $backendAddress $namespace -}}
 {{- else -}}
 {{- printf "http://%s/" $backendAddress -}}
 {{- end -}}
