@@ -14,3 +14,10 @@ The reason why there are two Charts here is because development cycle of the app
 
 [Canary chart](./canary/README.MD) is optional and exists for creating a stable, alias endpoint fronting multiple - usually two - application versions: current production version and new upgrade version that needs to be verified before getting promoted to production.
 
+## Security
+
+See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+
+## License
+
+This library is licensed under the MIT-0 License. See the [LICENSE](./LICENSE) file.
