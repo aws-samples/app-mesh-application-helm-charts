@@ -1,0 +1,93 @@
+# Default values for application.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+# fullnameOverride: your-main-resource-name 
+image:
+  repository: # required: specify repository
+  tag: latest
+  pullPolicy: Always # Change to IfNotPresent if image tag ^^ is immutable
+imagePullSecrets: []
+  # Optionally specify an array of imagePullSecrets.
+  # Secrets must be manually created in the namespace.
+  # ref: https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  #
+  # This uses credentials from secret "myRegistryKeySecretName".
+  # - name: myRegistryKeySecretName
+service:
+  type: ClusterIP
+  port: 80
+
+deployment:
+  containerPort: 80
+
+backend:
+  envAddresses: # These entries will be turned into environment variables looking like "Settings_ServiceBaseUrl: http://color-canary/" or "Settings_ServiceBaseUrl: http://color-canary.namespace.svc.cluster.local/"
+    # Settings__ServiceBaseUrl: color-canary
+
+probes:
+  enabled: false
+
+appMesh:
+  enabled: false
+  outsideTrafficAllowed: false
+  fargatePodServiceAccount: # envoy-fargate-pod-svcaccount # Specify when running on EKS Fargate nodes
+  gatewayRouteMatchPrefix: # Supply override here, otherwise it's "/service-name"
+
+  healthCheck:
+    healthyThreshold: 2
+    intervalMillis: 5000
+    path: / # Must return 200, not Redirect (3xx) or 4xx or 5xx
+    protocol: http
+    timeoutMillis: 2000
+    unhealthyThreshold: 2
+
+env:
+  # ASPNETCORE_ENVIRONMENT: Development
+  # Settings__Color: red
+
+ingress:
+  enabled: false
+  cnameHost: # 192-168-1-10.nip.io # A hostname to which service name can prepended, like "service-name.192-168-1-10.nip.io"
+  path: /*
+  # hosts:
+  #   - chart-example.local
+  tls: []
+    # - secretName: chart-example-tls
+    #   hosts:
+    #     - chart-example.local
+
+  annotations:
+    # kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+
+secrets: {}
+  # Optionally specify a set of secret objects whose values
+  # will be injected as environment variables by default.
+  # You should add this section to a file like secrets.yaml
+  # that is explicitly NOT committed to source code control
+  # and then include it as part of your helm install step.
+  # ref: https://kubernetes.io/docs/concepts/configuration/secret/
+  #
+  # This creates a secret "mysecret" and injects "mypassword"
+  # as the environment variable mysecret_mypassword=password.
+  # mysecret:
+  #   mypassword: password
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

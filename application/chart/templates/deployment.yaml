@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "application.fullname" . }}
+  labels:
+    app: {{ template "application.name" . }}
+    chart: {{ template "application.chart" . }}
+    draft: {{ .Values.draft | default "draft-app" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  revisionHistoryLimit: 0
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "application.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "application.name" . }}
+        draft: {{ .Values.draft | default "draft-app" }}
+        release: {{ .Release.Name }}
+      annotations:
+        buildID: {{ .Values.buildID | default "" | quote }}
+    spec:
+      {{- if .Values.appMesh.fargatePodServiceAccount }}
+      serviceAccountName: {{ .Values.appMesh.fargatePodServiceAccount }}
+      securityContext:
+        fsGroup: 1337
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ required "Please specify container image repository" .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.deployment.containerPort }}
+              protocol: TCP
+          {{- if .Values.probes.enabled }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          {{- end }}
+          env:
+            {{- range $key, $value := .Values.backend.envAddresses }}
+            - name: {{ $key }}
+              value: {{ template "backendUrl" (dict "appMeshEnabled" $.Values.appMesh.enabled "backendAddress" $value "namespace" $.Release.Namespace) }}
+            {{- end }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value }}
+            {{- end }}
+            {{- $root := . }}
+            {{- range $ref, $values := .Values.secrets }}
+            {{- range $key, $value := $values }}
+            - name: {{ $ref }}_{{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "application.fullname" $root }}-{{ $ref | lower }}
+                  key: {{ $key }}
+            {{- end }}
+            {{- end }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

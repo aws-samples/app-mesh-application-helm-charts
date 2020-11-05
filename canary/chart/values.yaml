@@ -1,0 +1,38 @@
+#fullnameOverride: canary 
+
+service:
+  type: ClusterIP
+  port: 80
+  portName: # http
+  targetPort: # specify if different from service port
+  selectorLabels: # required lable(s) shared by application pods of different versions
+    # app: # chart-name-of-the-application
+
+appMesh:
+  enabled: false
+  outsideTrafficAllowed: false # change to true if this Canary needs to be accessible from outside the mesh
+  vRouterListenerProtocol: http
+  gatewayRouteMatchPrefix: # Supply an override here, otherwise it's "/service-name"
+
+  targets:  # Uncomment snippet below to set route(s) to your existing back-end app Virtual Node
+  #  - vNodeName: existing-vnode-for-service-v1
+  #    weight: 9
+  #  - vNodeName: existing-vnode-for-service-v2
+  #    weight: 1
+
+ingress:
+  enabled: false 
+  cnameHost: # 192-168-1-10.nip.io # A hostname to which service name can prepended, like "service-name.192-168-1-10.nip.io"
+  path: /*
+  # hosts:
+  #   - chart-example.local
+  tls: []
+    # - secretName: chart-example-tls
+    #   hosts:
+    #     - chart-example.local
+
+  annotations:
+    # kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
